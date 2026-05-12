@@ -41,6 +41,8 @@ State currentState = IDLE;
 
 unsigned long exposureStartMs    = 0;
 unsigned long exposureDurationMs = MIN_DURATION_MS;
+uint8_t       exposureY          = 0;
+uint8_t       exposureM          = 0;
 unsigned long doneStartMs        = 0;
 unsigned long lastOledRefreshMs  = 0;
 
@@ -117,29 +119,29 @@ void oledOff() { display.ssd1306_command(SSD1306_DISPLAYOFF); }
 
 void oledShow(uint8_t y, uint8_t m, unsigned long durMs, const char* status) {
   display.clearDisplay();
-
   display.setTextColor(SSD1306_WHITE);
+
+  // Zone jaune (y = 0 - 15) : titre + statut
   display.setTextSize(1);
   display.setCursor(0, 0);
   display.print("PRE-FLASH RA-4");
+  display.setCursor(0, 8);
+  display.print("[ ");
+  display.print(status);
+  display.print(" ]");
 
+  // Zone bleue (y = 16 - 63) : valeurs Y / M / T
   char buf[24];
   display.setTextSize(2);
-  display.setCursor(0, 14);
+  display.setCursor(0, 18);
   snprintf(buf, sizeof(buf), "Y%03u M%03u", y, m);
   display.print(buf);
 
   unsigned long whole  = durMs / 1000;
   unsigned long tenths = (durMs / 100) % 10;
-  display.setCursor(0, 34);
+  display.setCursor(0, 40);
   snprintf(buf, sizeof(buf), "T %02lu.%lus", whole, tenths);
   display.print(buf);
-
-  display.setTextSize(1);
-  display.setCursor(0, 56);
-  display.print("[ ");
-  display.print(status);
-  display.print(" ]");
 
   display.display();
 }
@@ -179,9 +181,7 @@ void loop() {
 
   if (oledPressed) {
     oledUserOn = !oledUserOn;
-    if (currentState != EXPOSING) {
-      if (oledUserOn) oledOn(); else oledOff();
-    }
+    if (oledUserOn) oledOn(); else oledOff();
   }
 
   switch (currentState) {
@@ -189,7 +189,8 @@ void loop() {
       if (startPressed) {
         exposureDurationMs = dur;
         exposureStartMs    = now;
-        oledOff();  // toujours OFF pendant l'expo, quelle que soit la pref user
+        exposureY          = y;
+        exposureM          = m;
         applyColor(y, m);
         currentState = EXPOSING;
       }
@@ -199,7 +200,6 @@ void loop() {
       if (startPressed || (now - exposureStartMs) >= exposureDurationMs) {
         clearStrip();
         doneStartMs = now;
-        if (oledUserOn) oledOn();
         currentState = DONE;
       }
       break;
@@ -211,17 +211,33 @@ void loop() {
       break;
   }
 
-  if (currentState != EXPOSING && oledUserOn &&
-      (now - lastOledRefreshMs) >= OLED_REFRESH_MS) {
+  if (oledUserOn && (now - lastOledRefreshMs) >= OLED_REFRESH_MS) {
     lastOledRefreshMs = now;
+
+    uint8_t showY = y;
+    uint8_t showM = m;
+    unsigned long showDur = dur;
+    const char* status = "READY";
+
+    if (currentState == EXPOSING) {
+      unsigned long elapsed   = now - exposureStartMs;
+      unsigned long remaining = (elapsed >= exposureDurationMs) ? 0 : (exposureDurationMs - elapsed);
+      // Arrondi au dixieme superieur : on lit 0.1 juste avant la fin, jamais 0.0
+      showDur = ((remaining + DURATION_STEP_MS - 1) / DURATION_STEP_MS) * DURATION_STEP_MS;
+      showY   = exposureY;
+      showM   = exposureM;
+      status  = "EXPOSING";
+    } else if (currentState == DONE) {
+      status = "DONE";
+    }
+
     static bool prevValid = false;
     static uint8_t prevY, prevM;
     static unsigned long prevDur;
     static State prevState;
-    if (!prevValid || y != prevY || m != prevM || dur != prevDur || currentState != prevState) {
-      const char* status = (currentState == DONE) ? "DONE" : "READY";
-      oledShow(y, m, dur, status);
-      prevY = y; prevM = m; prevDur = dur; prevState = currentState;
+    if (!prevValid || showY != prevY || showM != prevM || showDur != prevDur || currentState != prevState) {
+      oledShow(showY, showM, showDur, status);
+      prevY = showY; prevM = showM; prevDur = showDur; prevState = currentState;
       prevValid = true;
     }
   }

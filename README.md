@@ -72,7 +72,7 @@ Et le board package : **Tools → Board → Boards Manager…**, installer `Ardu
    - Pot Durée : durée du flash, de **0.1 s à 10.0 s** par pas de 0.1 s.
 2. **Bouton OLED** (D3) : éteint/rallume l'écran. À utiliser quand le papier est en place pour éviter tout voile parasite.
 3. **Bouton START** (D2) :
-   - En IDLE : déclenche le flash. L'OLED s'éteint automatiquement pendant l'exposition.
+   - En IDLE : déclenche le flash. L'OLED **n'est pas touché** par ce bouton — si tu veux l'éteindre pour éviter de voiler le papier, appuie sur le bouton OLED **avant** de déclencher.
    - Pendant le flash : ré-appuyer **interrompt** immédiatement l'exposition.
 4. Après le flash, brève phase « DONE » (1 s) puis retour automatique en IDLE.
 
@@ -104,7 +104,7 @@ Si tu veux remonter `MASTER_BRIGHTNESS` au-delà de ~40, ou si la matrice fait d
 - **Condensateur 1000 µF** entre +5V et GND au plus près de la matrice.
 - **Alim 5V externe ≥ 4 A**, masse commune avec l'Arduino (ne **pas** alimenter la matrice par la broche 5V de l'Arduino dans ce cas).
 
-L'OLED émet aussi de la lumière : c'est précisément pour ça que le bouton D3 le coupe à la demande, et que le firmware le force OFF pendant chaque flash.
+L'OLED émet aussi de la lumière : le bouton D3 le coupe à la demande. Le firmware **ne touche jamais** à l'état physique de l'OLED de lui-même (notamment pas pendant un flash) — c'est à toi de l'éteindre via D3 avant l'exposition si tu veux éviter tout voile parasite. Pendant le flash, le rafraîchissement du contenu est suspendu mais l'écran reste dans l'état que tu as choisi.
 
 ## Workflow conseillé
 
