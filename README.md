@@ -120,5 +120,6 @@ L'OLED émet aussi de la lumière : c'est précisément pour ça que le bouton D
 | `MIN_DURATION_MS` / `MAX_DURATION_MS` | `100` / `10000` | Plage du pot durée |
 | `DURATION_STEP_MS` | `100` | Pas de quantification de la durée |
 | `DEBOUNCE_MS` | `15` | Anti-rebond software des boutons |
-| `OLED_REFRESH_MS` | `50` | Cadence rafraîchissement OLED (20 Hz) |
+| `OLED_REFRESH_MS` | `50` | Cadence max de rafraîchissement OLED (20 Hz, redessine seulement si valeurs changent) |
 | `ANALOG_SAMPLES` | `8` | Taille de la moyenne glissante sur les pots |
+| `ANALOG_SAMPLE_INTERVAL_MS` | `5` | Intervalle entre 2 échantillonnages des pots (8 × 5 ms = fenêtre de filtrage de 40 ms) |
