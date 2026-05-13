@@ -15,7 +15,8 @@
 
 // --- Constantes ---
 #define NUM_LEDS                    64
-#define MASTER_BRIGHTNESS           25     // 0-255, ~10 % par defaut (USB-safe)
+#define LIT_STRIDE                   2     // n'allume qu'une LED sur N (1=toutes, 2=moitie, 4=quart)
+#define MASTER_BRIGHTNESS           10     // 0-255, ~4 % (plus bas = plus de plage utile sur le pot duree)
 #define MIN_DURATION_MS            100
 #define MAX_DURATION_MS          10000
 #define DURATION_STEP_MS           100
@@ -104,13 +105,19 @@ unsigned long getDurationMs() {
 
 // --- Matrice ---
 void applyColor(uint8_t y, uint8_t m) {
-  strip.fill(strip.Color(255, 255 - m, 255 - y));
+  uint32_t c = strip.Color(255, 255 - m, 255 - y);
+  strip.clear();
+  for (uint16_t i = 0; i < NUM_LEDS; i += LIT_STRIDE) {
+    strip.setPixelColor(i, c);
+  }
   strip.show();
 }
 
 void clearStrip() {
   strip.clear();
   strip.show();
+  delayMicroseconds(300);  // > 50 us de latch WS2812
+  strip.show();            // 2e trame : rattrape un bit corrompu dans la 1ere
 }
 
 // --- OLED ---
@@ -156,8 +163,16 @@ void setup() {
   strip.setBrightness(MASTER_BRIGHTNESS);
   strip.clear();
   strip.show();
+  delayMicroseconds(300);
+  strip.show();  // 2e trame pour garantir all-off au demarrage
 
-  display.begin(SSD1306_SWITCHCAPVCC, OLED_ADDRESS);
+  // OLED : laisse le charge pump SSD1306 stabiliser, puis retry borne
+  delay(100);
+  unsigned long oledStartMs = millis();
+  while (!display.begin(SSD1306_SWITCHCAPVCC, OLED_ADDRESS)) {
+    if (millis() - oledStartMs >= 2000) break;  // abandon apres 2 s si OLED HS
+    delay(100);
+  }
   display.clearDisplay();
   display.display();
 }
@@ -185,7 +200,12 @@ void loop() {
   }
 
   switch (currentState) {
-    case IDLE:
+    case IDLE: {
+      static unsigned long lastIdleRefreshMs = 0;
+      if ((now - lastIdleRefreshMs) >= 100) {
+        lastIdleRefreshMs = now;
+        strip.show();  // buffer deja a zero, on re-flush au cas ou une LED a glitche
+      }
       if (startPressed) {
         exposureDurationMs = dur;
         exposureStartMs    = now;
@@ -195,6 +215,7 @@ void loop() {
         currentState = EXPOSING;
       }
       break;
+    }
 
     case EXPOSING:
       if (startPressed || (now - exposureStartMs) >= exposureDurationMs) {

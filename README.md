@@ -18,8 +18,8 @@ Note : un 4ᵉ potentiomètre peut être prévu physiquement mais n'est **pas c�
 | Composant | Pin Arduino | Remarque |
 |---|---|---|
 | WS2812 — DIN | D6 | idéalement via résistance 330 Ω (voir « Recommandations électriques ») |
-| WS2812 — 5V | 5V | OK sur USB tant que `MASTER_BRIGHTNESS` ≤ 25 |
-| WS2812 — GND | GND | masse commune |
+| WS2812 — 5V (V+ IN) | 5V | OK sur USB tant que `MASTER_BRIGHTNESS` ≤ 25 |
+| WS2812 — GND (V− IN, sinon V− OUT) | GND | masse commune — voir note ci-dessous |
 | OLED — SDA | SDA | broche dédiée du R4 Minima |
 | OLED — SCL | SCL | broche dédiée du R4 Minima |
 | OLED — VCC | 3V3 ou 5V | selon le module |
@@ -31,21 +31,28 @@ Note : un 4ᵉ potentiomètre peut être prévu physiquement mais n'est **pas c�
 | Pot Durée (curseur) | A2 | idem |
 
 ```
-            +5V ──┬───────────── WS2812 VCC
+            +5V ──┬───────────── WS2812 V+ (IN, côté DIN)
                   │
                   ├── pot Y ── A0
                   ├── pot M ── A1
                   └── pot T ── A2
 
-            GND ──┬───────────── WS2812 GND
+            GND ──┬───────────── WS2812 V- (IN si soudable, sinon V- OUT)
                   ├── tous les pots (autre extrémité)
                   ├── bouton START ── D2
                   └── bouton OLED  ── D3
 
-            D6 ───────────────── WS2812 DIN
+            D6 ───────────────── WS2812 DIN (IN)
             SDA ──────────────── OLED SDA
             SCL ──────────────── OLED SCL
 ```
+
+### Notes sur le montage physique
+
+- **Layout matrice : row-by-row** (pas serpentine). L'indice `i` parcourt la matrice ligne par ligne, gauche → droite, ligne 0 en haut. Pour un motif (row, col), faire `row = i / 8`, `col = i % 8`. C'est pour ça qu'avec `LIT_STRIDE = 2` on voit des **rayures verticales** et pas un damier.
+- **GND matrice** : sur cette matrice, le pad V− côté **IN** n'a souvent pas de trou traversant utilisable. Si tu ne peux pas y souder, raccorde le GND côté **OUT** (V− OUT) — électriquement c'est la même masse, mais soigne le contact : une pince crocodile lâche sur ce point est un contributeur classique aux glitches data sur les WS2812.
+- **R330 / cap 1000 µF** : absents dans la version actuelle du montage. Le firmware compense par des défenses logicielles (double `show()` après `clear()`, refresh périodique en IDLE). Pour un montage durable ou si tu remontes `MASTER_BRIGHTNESS`, ajoute-les (voir « Recommandations électriques »).
+- **Diffuseur** : prévoir un calque / plexi dépoli posé quelques mm au-dessus de la matrice. Le `LIT_STRIDE = 2` économise du courant mais produit un éclairement non uniforme (1 LED sur 2 allumée) — le diffuseur homogénéise.
 
 ## Installation des librairies
 
