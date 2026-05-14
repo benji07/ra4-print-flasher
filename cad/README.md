@@ -2,8 +2,18 @@
 
 Deux boîtes imprimables, reliées par un câble 3 fils :
 
-- **`led_box`** : abrite la matrice WS2812 8×8 + plexi opalin diffuseur. Se suspend sous la tête de l'agrandisseur par un trou Ø8mm.
-- **`control_box`** : abrite l'Arduino Uno R4 Minima + pile 9V + interrupteur, avec sur le panneau frontal l'OLED, 3 potentiomètres (Y/M/T) et 2 boutons (GO/OLED). Aimantée à la tête de l'agrandisseur ou posée à côté.
+- **`led_box`** (95×80×30 mm) : abrite la matrice WS2812 8×8 + plexi opalin diffuseur. Se suspend sous la tête de l'agrandisseur par un trou Ø8mm.
+- **`control_box`** (150×90×35 mm) : abrite l'Arduino Uno R4 Minima + pile 9V + interrupteur, avec sur le panneau frontal l'OLED, 3 potentiomètres (Y/M/T) et 2 boutons (GO/OLED). Aimantée à la tête de l'agrandisseur ou posée à côté.
+
+## Architecture de fermeture
+
+Les deux boîtes ont la même structure :
+- **Corps** = fond + paroi mince (2.4 mm) + **rebord épaissi en haut** (6.5 mm × 4 mm) qui loge les aimants Ø5×2.78mm
+- **Couvercle** = simple plaque plate 4 mm, avec logements aimants en miroir
+- **Alignement** par 2 ergots Ø2.5×2 mm aux coins diagonalement opposés du rebord
+- Les aimants se collent à la cyano dans leurs logements ; le couvercle se "clique" sur le corps
+
+Pour la boîte commande, 4 aimants supplémentaires sont logés dans des **bossages internes au fond** et débouchent sur la face extérieure du dos — c'est ce qui aimante la boîte à la tête métallique de l'agrandisseur.
 
 ## Génération des STL
 
@@ -25,16 +35,17 @@ Pour visualiser en preview avant export : ouvrir un `.scad` dans l'app OpenSCAD,
 Toutes les dimensions partagées sont dans `common.scad` (tolérances, dimensions composants, épaisseurs paroi). Ajuster en haut du fichier si tes composants diffèrent — par exemple :
 
 - `MATRIX_PCB` / `MATRIX_MTG` : si ton PCB matrice fait autre chose que 65mm avec entraxe 58mm
-- `MAG_TOL_D` / `MAG_TOL_H` : si les aimants flottent ou ne rentrent pas
-- `LIP_TOL` : si le couvercle est trop serré ou trop libre dans le corps
-- `POT_HOLE` / `BTN_HOLE` : si tes pots/boutons ont un Ø différent
+- `MAG_D` / `MAG_H` : pour des aimants d'autre dimensions (par défaut Ø5×2.78)
+- `MAG_TOL_D` / `MAG_TOL_H` : si les aimants flottent ou ne rentrent pas dans les logements
+- `RIM_W` / `RIM_H` : largeur et hauteur du rebord (par défaut 6.5×4 mm — augmenter si aimants plus gros)
+- `POT_HOLE` / `BTN_HOLE` : Ø des trous panneau (par défaut 7.2 mm pour les deux types)
 
 ## BOM impression / matériel
 
 | Élément | Quantité | Notes |
 |---|---|---|
 | PLA noir ou PETG noir | ~150 g | Noir = anti-fuite lumineuse |
-| Aimants néodyme Ø10×3 mm | 14 | 4 LED fermeture + 6 control fermeture + 4 control arrière |
+| Aimants néodyme Ø5×2.78 mm | 24 | 8 LED fermeture (4 paires) + 12 control fermeture (6 paires) + 4 control arrière (sur fond, contre tête métallique) |
 | Plexi opalin 65×65×3 mm | 1 | Diffuseur |
 | Vis M2.5×6 autotaraudeuses | 4 | Fixation PCB matrice |
 | Vis M3×8 autotaraudeuses | 4 | Fixation Arduino |
@@ -55,7 +66,8 @@ Toutes les dimensions partagées sont dans `common.scad` (tolérances, dimension
 
 ## Assemblage
 
-1. **Coller les aimants** dans tous les logements à la cyano (s'assurer de la polarité : couvercle vs corps doivent s'attirer ; aimants arrière de la boîte commande dans le même sens entre eux).
+1. **Coller les aimants** dans tous les logements à la cyano. Faire attention à la polarité : pour chaque paire de fermeture, le pôle de l'aimant du couvercle doit attirer celui du corps (tester avec 2 aimants à la main avant de coller). Les 4 aimants arrière de la boîte commande peuvent être collés tous dans le même sens (peu importe lequel — l'autre face est la tête métallique de l'agrandisseur).
+1. **Glisser les ergots du corps dans les trous du couvercle** au moment de la fermeture — c'est ce qui empêche le couvercle de glisser latéralement.
 2. **Boîte LED** :
    - Souder le câble 3 fils sur le PCB matrice (V+, V−, DIN). V− côté **IN** si soudable, sinon **OUT** (voir [`README.md`](../README.md) racine).
    - Passer le câble par le trou Ø6 de la paroi droite, faire passer entre les 2 serre-câbles internes.
@@ -76,9 +88,9 @@ Toutes les dimensions partagées sont dans `common.scad` (tolérances, dimension
 
 Ouvrir chaque STL dans le slicer et vérifier visuellement :
 
-- **`led_box_body.stl`** : trou Ø8 dans un coin, passe-câble Ø6 sur la même paroi (X+), 4 plots PCB centrés à gauche.
-- **`led_box_lid.stl`** : trou central 65×65 mm aligné à gauche (pas centré), feuillure plexi visible en-dessous, trou Ø8 dans le coin.
-- **`control_box_body.stl`** : 4 plots Arduino à gauche, cale 4 nervures à droite pour pile, trou rectangulaire rocker sur paroi droite, trou Ø6 sur paroi gauche, 4 logements aimants sur le fond extérieur.
-- **`control_box_lid.stl`** : OLED + 3 pots + 2 boutons regroupés à gauche, marquage `PRINT FLASHER` à droite.
+- **`led_box_body.stl`** : trou Ø8 dans un coin, passe-câble Ø6 sur la même paroi (X+), 4 plots PCB centrés à gauche, rebord épaissi visible en haut avec 4 logements aimants ronds + 2 ergots aux coins.
+- **`led_box_lid.stl`** : plaque plate avec trou central 65×65 mm aligné sur le PCB, feuillure plexi visible sur la face inférieure, trou Ø8 dans le coin, 4 logements aimants en miroir + 2 trous d'ergots.
+- **`control_box_body.stl`** : plots Arduino à gauche, cale 4 nervures à droite, trou rocker sur paroi droite, trou Ø6 sur paroi gauche, rebord épaissi en haut (6 logements aimants + 2 ergots), 4 bossages internes au fond avec logements aimants traversants (visibles depuis le dessous).
+- **`control_box_lid.stl`** : plaque plate avec OLED + 5 trous Ø7.2 uniformes (Y, M, T, GO, OLED), marquages texte, logements aimants en miroir + 2 trous d'ergots.
 
-Imprimer **un bord de 20mm de haut** avec un logement aimant pour calibrer `MAG_TOL_D` avant l'impression complète.
+Imprimer **un coin du rebord seul** (5×5×10 mm avec un logement aimant) pour calibrer `MAG_TOL_D` avant l'impression complète.
