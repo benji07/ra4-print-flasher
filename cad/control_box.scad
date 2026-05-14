@@ -42,9 +42,9 @@ RIB_H      = 16;
 ROCKER_Y = BOX_Y / 2;
 ROCKER_Z = 17;
 
-// --- Sortie câble (paroi gauche X−) ---
-CABLE_Y = BOX_Y / 2;
-CABLE_Z = BOX_Z / 2;
+// --- Sortie câble : encoche en haut du rebord, paroi gauche X− ---
+// Décalée de la position du mid-aimant gauche (Y=BOX_Y/2=45) pour ne pas le chevaucher.
+CABLE_NOTCH_Y = 70;
 
 // --- Panneau frontal : 5 trous Ø7.2 uniformément espacés ---
 PANEL_Y    = 25;
@@ -97,11 +97,6 @@ module control_box_body() {
                 cube([PP3_OUT_W + 2*RIB_TH, RIB_TH, RIB_H]);
             translate([PP3_X - RIB_TH, PP3_Y + PP3_OUT_L, FLOOR])
                 cube([PP3_OUT_W + 2*RIB_TH, RIB_TH, RIB_H]);
-            // Serre-câble près du passe-câble gauche
-            for (dy = [-4, 4]) {
-                translate([WALL + 3, CABLE_Y + dy, FLOOR])
-                    cylinder(d=2.5, h=BOX_Z/2);
-            }
             // Bossages internes pour aimants arrière (sur la face supérieure du fond)
             for (p = back_mag_positions) floor_boss(p);
             // Ergots d'alignement
@@ -110,10 +105,8 @@ module control_box_body() {
         // Trou rocker paroi droite
         translate([BOX_X - WALL - 0.1, ROCKER_Y - ROCKER_HOLE_W/2, ROCKER_Z - ROCKER_HOLE_H/2])
             cube([WALL + 0.2, ROCKER_HOLE_W, ROCKER_HOLE_H]);
-        // Passe-câble paroi gauche
-        translate([-0.1, CABLE_Y, CABLE_Z])
-            rotate([0, 90, 0])
-                cylinder(d=CABLE_HOLE_D, h=WALL + 0.2);
+        // Passe-câble : encoche en haut du rebord, paroi gauche
+        cable_notch("L", CABLE_NOTCH_Y, [BOX_X, BOX_Y, BOX_Z]);
         // Aimants fermeture (rebord)
         for (p = mag_positions) rim_mag_pocket(p, BOX_Z);
         // Aimants arrière (carvés depuis la face extérieure du fond, à travers le bossage)

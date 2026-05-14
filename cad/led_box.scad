@@ -33,9 +33,8 @@ PCB_CENTER_Y  = BOX_Y / 2;
 HOLE_CENTER_X = PCB_CENTER_X;
 HOLE_CENTER_Y = PCB_CENTER_Y;
 
-// --- Sortie câble (paroi droite X+, près du trou de fix) ---
-CABLE_Z       = BOX_Z / 2;
-CABLE_Y       = FIX_CORNER_Y + FIX_BOSS_D/2 + 5;  // 20mm — juste au-dessus du bossage
+// --- Sortie câble : encoche en haut du rebord, paroi droite X+, au-dessus du bossage de fix ---
+CABLE_NOTCH_Y = FIX_CORNER_Y + FIX_BOSS_D/2 + 5;  // 20mm — au-dessus du bossage
 
 // --- Positions aimants (4 sur le rebord, 1 par côté) ---
 mag_positions = [
@@ -68,21 +67,14 @@ module led_box_body() {
                 ])
                     screw_post(MATRIX_POST_D, MATRIX_MTG_D, MATRIX_POST_H);
             }
-            // Serre-câble interne (2 petits pions près du passe-câble)
-            for (dy = [-4, 4]) {
-                translate([BOX_X - WALL - 3, CABLE_Y + dy, FLOOR])
-                    cylinder(d=2.5, h=BOX_Z/2);
-            }
             // Ergots d'alignement
             for (p = peg_positions) rim_peg(p, BOX_Z);
         }
         // Trou de fixation Ø8 traversant
         translate([FIX_CORNER_X, FIX_CORNER_Y, -0.1])
             cylinder(d=FIX_HOLE_D, h=BOX_Z + 0.2);
-        // Passe-câble paroi droite
-        translate([BOX_X + 0.1, CABLE_Y, CABLE_Z])
-            rotate([0, -90, 0])
-                cylinder(d=CABLE_HOLE_D, h=WALL + 0.2);
+        // Passe-câble : encoche en haut du rebord, paroi droite
+        cable_notch("R", CABLE_NOTCH_Y, [BOX_X, BOX_Y, BOX_Z]);
         // Logements aimants dans le rebord
         for (p = mag_positions) rim_mag_pocket(p, BOX_Z);
     }

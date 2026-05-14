@@ -50,8 +50,9 @@ Toutes les dimensions partagées sont dans `common.scad` (tolérances, dimension
 | Vis M2.5×6 autotaraudeuses | 4 | Fixation PCB matrice |
 | Vis M3×8 autotaraudeuses | 4 | Fixation Arduino |
 | Vis M2×4 autotaraudeuses | 4 | Fixation OLED |
-| Câble 3 conducteurs ~22AWG | 80–120 cm | 5V / GND / Data |
-| JST-XH 3 broches mâle + femelle | 1 paire | Connecteur côté commande |
+| Câble 3 conducteurs ~22AWG | 80–120 cm | 5V / GND / Data, JST mâle aux 2 bouts |
+| JST-XH 3 broches mâle (sur câble) | 2 | Un à chaque extrémité du câble |
+| JST-XH 3 broches femelle | 2 | Une dans chaque boîte (soudée aux fils internes) |
 | Clip pile 9V | 1 | Connecteur batterie |
 | Interrupteur rocker 15×10mm | 1 | Trou panneau 13×8mm |
 
@@ -68,21 +69,26 @@ Toutes les dimensions partagées sont dans `common.scad` (tolérances, dimension
 
 1. **Coller les aimants** dans tous les logements à la cyano. Faire attention à la polarité : pour chaque paire de fermeture, le pôle de l'aimant du couvercle doit attirer celui du corps (tester avec 2 aimants à la main avant de coller). Les 4 aimants arrière de la boîte commande peuvent être collés tous dans le même sens (peu importe lequel — l'autre face est la tête métallique de l'agrandisseur).
 1. **Glisser les ergots du corps dans les trous du couvercle** au moment de la fermeture — c'est ce qui empêche le couvercle de glisser latéralement.
-2. **Boîte LED** :
-   - Souder le câble 3 fils sur le PCB matrice (V+, V−, DIN). V− côté **IN** si soudable, sinon **OUT** (voir [`README.md`](../README.md) racine).
-   - Passer le câble par le trou Ø6 de la paroi droite, faire passer entre les 2 serre-câbles internes.
+2. **Câble inter-boîtes** :
+   - Câble 3 conducteurs avec un connecteur JST-XH mâle 3 broches serti à chaque extrémité (commerce ou DIY).
+3. **Boîte LED** :
+   - Souder 3 fils courts sur le PCB matrice (V+, V−, DIN). V− côté **IN** si soudable, sinon **OUT** (voir [`README.md`](../README.md) racine).
+   - Souder l'autre bout de ces 3 fils à une embase JST-XH 3 broches femelle.
    - Visser le PCB matrice sur ses 4 plots (M2.5).
    - Glisser le plexi opalin dans la feuillure du couvercle (par-dessous le couvercle).
-   - Fermer le couvercle (aimants).
-3. **Boîte commande** :
+   - Brancher le câble inter-boîtes (JST mâle) sur l'embase femelle interne et faire sortir le câble par l'encoche de la paroi droite (au-dessus du trou de fix).
+   - Fermer le couvercle (aimants + ergots).
+4. **Boîte commande** :
    - Visser l'Arduino sur ses 4 plots (M3).
    - Visser l'OLED sur les 4 plots du couvercle (M2). Souder VCC / GND / SDA / SCL aux pins correspondants.
    - Câbler 3 pots (5V / curseur sur A0,A1,A2 / GND) et 2 boutons (D2,D3 vers GND).
    - Câbler la pile 9V : (+) → interrupteur entrée, interrupteur sortie → VIN Arduino ; (−) → GND Arduino. Clipser le rocker dans son trou latéral.
    - Glisser la pile 9V entre les 4 nervures de cale.
-   - Souder l'autre extrémité du câble inter-boîtes à une embase JST-XH 3 broches femelle. Brancher sur le connecteur mâle JST-XH soudé à 3 fils dupont (5V Arduino / GND Arduino / D6 Arduino).
-   - Faire passer le câble par le trou Ø6 de la paroi gauche, entre les serre-câbles.
-   - Fermer le couvercle (aimants).
+   - Souder 3 fils dupont 5V / GND / D6 de l'Arduino à une embase JST-XH 3 broches femelle.
+   - Brancher le câble inter-boîtes (JST mâle) sur l'embase femelle et faire sortir le câble par l'encoche de la paroi gauche.
+   - Fermer le couvercle (aimants + ergots).
+
+Le câble se débranche des deux côtés (JST mâle/femelle aux 2 boîtes) — pratique pour ranger ou remplacer.
 
 ## Vérification avant impression
 

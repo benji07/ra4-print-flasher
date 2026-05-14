@@ -73,8 +73,32 @@ PP3_TOL       = 1.0;
 ROCKER_HOLE_W = 13.2;
 ROCKER_HOLE_H = 8.2;
 
-// --- Câble inter-boîtes ---
-CABLE_HOLE_D  = 6.0;
+// --- Câble inter-boîtes : encoche en haut de la paroi (au niveau du rebord) ---
+// Le câble exit la boîte par une encoche rectangulaire ouverte vers le haut,
+// fermée par le couvercle. Imprimable sans support, pas de jonction câble/PCB
+// dans la boîte (JST des 2 côtés → câble débrochable des 2 boîtes).
+NOTCH_W       = 8.0;    // largeur (Ø câble ~6mm + jeu)
+NOTCH_D       = 6.0;    // profondeur depuis le haut du rebord (laisse passer Ø6 confortablement)
+
+// Encoche traversante dans la paroi, ouverte vers Z+.
+//   side ∈ "L", "R", "F", "B"
+//   t    : position le long de la paroi (Y pour L/R, X pour F/B)
+//   box  : [BOX_X, BOX_Y, BOX_Z]
+module cable_notch(side, t, box) {
+    if (side == "L") {
+        translate([-0.1, t - NOTCH_W/2, box.z - NOTCH_D])
+            cube([RIM_W + 0.2, NOTCH_W, NOTCH_D + 0.1]);
+    } else if (side == "R") {
+        translate([box.x - RIM_W - 0.1, t - NOTCH_W/2, box.z - NOTCH_D])
+            cube([RIM_W + 0.2, NOTCH_W, NOTCH_D + 0.1]);
+    } else if (side == "F") {
+        translate([t - NOTCH_W/2, -0.1, box.z - NOTCH_D])
+            cube([NOTCH_W, RIM_W + 0.2, NOTCH_D + 0.1]);
+    } else if (side == "B") {
+        translate([t - NOTCH_W/2, box.y - RIM_W - 0.1, box.z - NOTCH_D])
+            cube([NOTCH_W, RIM_W + 0.2, NOTCH_D + 0.1]);
+    }
+}
 
 // ============================================================================
 // Helpers géométriques
