@@ -3,7 +3,7 @@
 Deux boîtes imprimables, reliées par un câble 3 fils :
 
 - **`led_box`** (95×80×30 mm) : abrite la matrice WS2812 8×8 + plexi opalin diffuseur. Se suspend sous la tête de l'agrandisseur par un trou Ø8mm.
-- **`control_box`** (150×90×35 mm) : abrite l'Arduino Uno R4 Minima + pile 9V + interrupteur, avec sur le panneau frontal l'OLED, 3 potentiomètres (Y/M/T) et 2 boutons (GO/OLED). Aimantée à la tête de l'agrandisseur ou posée à côté.
+- **`control_box`** (150×90×35 mm) : abrite l'Arduino Uno R4 Minima + pile 9V, avec sur le panneau frontal l'OLED, 3 potentiomètres (Y/M/T) et 2 boutons (GO/OLED). Aimantée à la tête de l'agrandisseur ou posée à côté.
 
 ## Architecture de fermeture
 
@@ -54,7 +54,6 @@ Toutes les dimensions partagées sont dans `common.scad` (tolérances, dimension
 | JST-XH 3 broches mâle (sur câble) | 2 | Un à chaque extrémité du câble |
 | JST-XH 3 broches femelle | 2 | Une dans chaque boîte (soudée aux fils internes) |
 | Clip pile 9V | 1 | Connecteur batterie |
-| Interrupteur rocker 15×10mm | 1 | Trou panneau 13×8mm |
 
 ## Paramètres slicer conseillés
 
@@ -82,7 +81,7 @@ Toutes les dimensions partagées sont dans `common.scad` (tolérances, dimension
    - Visser l'Arduino sur ses 4 plots (M3).
    - Visser l'OLED sur les 4 plots du couvercle (M2). Souder VCC / GND / SDA / SCL aux pins correspondants.
    - Câbler 3 pots (5V / curseur sur A0,A1,A2 / GND) et 2 boutons (D2,D3 vers GND).
-   - Câbler la pile 9V : (+) → interrupteur entrée, interrupteur sortie → VIN Arduino ; (−) → GND Arduino. Clipser le rocker dans son trou latéral.
+   - Câbler la pile 9V : (+) → VIN Arduino ; (−) → GND Arduino.
    - Glisser la pile 9V entre les 4 nervures de cale.
    - Souder 3 fils dupont 5V / GND / D6 de l'Arduino à une embase JST-XH 3 broches femelle.
    - Brancher le câble inter-boîtes (JST mâle) sur l'embase femelle et faire sortir le câble par l'encoche de la paroi gauche.
@@ -96,7 +95,7 @@ Ouvrir chaque STL dans le slicer et vérifier visuellement :
 
 - **`led_box_body.stl`** : trou Ø8 dans un coin, passe-câble Ø6 sur la même paroi (X+), 4 plots PCB centrés à gauche, rebord épaissi visible en haut avec 4 logements aimants ronds + 2 ergots aux coins.
 - **`led_box_lid.stl`** : plaque plate avec trou central 65×65 mm aligné sur le PCB, feuillure plexi visible sur la face inférieure, trou Ø8 dans le coin, 4 logements aimants en miroir + 2 trous d'ergots.
-- **`control_box_body.stl`** : plots Arduino à gauche, cale 4 nervures à droite, trou rocker sur paroi droite, trou Ø6 sur paroi gauche, rebord épaissi en haut (6 logements aimants + 2 ergots), 4 bossages internes au fond avec logements aimants traversants (visibles depuis le dessous).
-- **`control_box_lid.stl`** : plaque plate avec OLED + 5 trous Ø7.2 uniformes (Y, M, T, GO, OLED), marquages texte, logements aimants en miroir + 2 trous d'ergots.
+- **`control_box_body.stl`** : plots Arduino à gauche, cale 4 nervures à droite, encoche Ø6 sur paroi gauche, rebord épaissi en haut (6 logements aimants + 2 ergots), 4 bossages internes au fond avec logements aimants traversants (visibles depuis le dessous).
+- **`control_box_lid.stl`** : plaque plate avec OLED + 5 trous Ø7.2 uniformes (Y, M, T, GO, OLED), marquages texte des labels décalés ~13 mm au-dessus des trous, logements aimants en miroir + 2 trous d'ergots.
 
 Imprimer **un coin du rebord seul** (5×5×10 mm avec un logement aimant) pour calibrer `MAG_TOL_D` avant l'impression complète.

@@ -1,6 +1,5 @@
-// Boîte de commande — abrite l'Arduino Uno R4 Minima, la pile 9V (PP3),
-// l'interrupteur rocker (côté droit), et sur le couvercle :
-// OLED + 3 pots Y/M/T + 2 boutons GO/OLED (tous Ø7.2).
+// Boîte de commande — abrite l'Arduino Uno R4 Minima et la pile 9V (PP3),
+// et sur le couvercle : OLED + 3 pots Y/M/T + 2 boutons GO/OLED (tous Ø7.2).
 // Câble vers la boîte LED sort par la paroi gauche.
 //
 // Architecture : paroi mince + rebord épaissi + plaque plate.
@@ -37,10 +36,6 @@ PP3_OUT_W  = PP3_W + PP3_TOL;
 PP3_OUT_L  = PP3_L + PP3_TOL;
 RIB_TH     = 1.6;
 RIB_H      = 16;
-
-// --- Interrupteur rocker (paroi droite X+) ---
-ROCKER_Y = BOX_Y / 2;
-ROCKER_Z = 17;
 
 // --- Sortie câble : encoche en haut du rebord, paroi gauche X− ---
 // Décalée de la position du mid-aimant gauche (Y=BOX_Y/2=45) pour ne pas le chevaucher.
@@ -102,9 +97,6 @@ module control_box_body() {
             // Ergots d'alignement
             for (p = peg_positions) rim_peg(p, BOX_Z);
         }
-        // Trou rocker paroi droite
-        translate([BOX_X - WALL - 0.1, ROCKER_Y - ROCKER_HOLE_W/2, ROCKER_Z - ROCKER_HOLE_H/2])
-            cube([WALL + 0.2, ROCKER_HOLE_W, ROCKER_HOLE_H]);
         // Passe-câble : encoche en haut du rebord, paroi gauche
         cable_notch("L", CABLE_NOTCH_Y, [BOX_X, BOX_Y, BOX_Z]);
         // Aimants fermeture (rebord)
@@ -142,7 +134,7 @@ module control_box_lid() {
         ENGRAVE = 0.6;
         translate([0, 0, LID_TH - ENGRAVE]) {
             for (i = [0 : len(HOLE_Xs) - 1]) {
-                translate([HOLE_Xs[i], PANEL_Y + 8, 0])
+                translate([HOLE_Xs[i], PANEL_Y + 13, 0])
                     linear_extrude(ENGRAVE + 0.1)
                         text(HOLE_LABELS[i], size=3.5, halign="center", valign="center",
                              font="Liberation Sans:style=Bold");
