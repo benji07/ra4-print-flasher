@@ -47,14 +47,22 @@ MATRIX_POST_H = 3;
 // --- Composants panneau ---
 POT_HOLE      = 7.2;    // Ø trou pot R09
 BTN_HOLE      = 7.2;    // Ø trou bouton 6×6mm avec capuchon — corrigé d'après le modèle utilisateur
-OLED_WIN_W    = 24;
-OLED_WIN_H    = 14;
-OLED_OUTER    = 27.5;
+OLED_WIN_W    = 25;
+OLED_WIN_H    = 15;
+OLED_OUTER    = 28;
 OLED_MTG_DX   = 23;
 OLED_MTG_DY   = 23.5;
 OLED_MTG_D    = 1.8;
 OLED_POST_D   = 4;
-OLED_POST_H   = 4;
+OLED_POST_H   = 1.5;   // plots courts : le verre du LCD (~1mm saillant) arrive ~0.5mm
+                       // sous la face interne au lieu de ~3mm avec les anciens 4mm.
+// Feuillure (bezel) côté EXTÉRIEUR : amincit le tunnel de la fenêtre de 4mm à ~1.5mm
+// de membrane, pour que l'écran lise proche de la surface. Rebord large (~2.5mm) robuste.
+// (Un lamage côté intérieur n'aurait PAS rapproché l'écran : c'est la hauteur des plots
+//  qui fixe la profondeur de l'écran, pas le creusement de la face interne.)
+OLED_BEZEL_W  = OLED_WIN_W + 5;   // 30
+OLED_BEZEL_H  = OLED_WIN_H + 5;   // 20
+OLED_BEZEL_D  = 2.5;              // profondeur depuis la face supérieure (laisse 1.5mm de membrane)
 
 // --- Arduino Uno R4 Minima ---
 ARDUINO_W     = 53.34;
