@@ -51,7 +51,7 @@ pot_positions = [
     [OLED_CX,             POT_Y],   // [40, 27]
     [OLED_CX + POT_PITCH, POT_Y]    // [65, 27]
 ];
-BTN_X     = OLED_CX + 28;           // 68, à droite de l'écran
+BTN_X     = OLED_CX + POT_PITCH;    // 65 : aligné avec le pot de droite (même colonne)
 btn_positions = [
     [BTN_X, 46],
     [BTN_X, 64]
