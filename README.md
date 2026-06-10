@@ -13,6 +13,10 @@ Outil de pre-flashing pour papier photo couleur RA-4, basé sur un Arduino Uno R
 
 Note : un 4ᵉ potentiomètre peut être prévu physiquement mais n'est **pas câblé** dans cette version.
 
+## Boîtiers 3D
+
+Modèles OpenSCAD paramétriques + STL prêts à imprimer dans [`cad/`](cad/) : une boîte LED suspendue (matrice + plexi opalin) et une boîte de commande aimantée (Arduino + pile 9V + écran + commandes). Voir [`cad/README.md`](cad/README.md) pour les instructions de génération STL, BOM impression et assemblage.
+
 ## Câblage
 
 | Composant | Pin Arduino | Remarque |
